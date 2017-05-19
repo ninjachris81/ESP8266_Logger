@@ -1,3 +1,8 @@
+/* META INFOS
+target_package=esp8266
+target_platform=esp8266
+board=generic
+*/
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
 

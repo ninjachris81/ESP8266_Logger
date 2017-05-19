@@ -7,11 +7,13 @@
 
 #define INPUT_SERIAL Serial
 
+//#define PRINT_BACK
+
 class ESPTSLog {
 public:
   ESPTSLog();
 
-  void init(int baudRate=9600);
+  void init(int baudRate=115200);
 
   void update();
 

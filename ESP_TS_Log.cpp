@@ -5,13 +5,25 @@ ESPTSLog::ESPTSLog() {
 
 void ESPTSLog::init(int baudRate) {
   INPUT_SERIAL.begin(baudRate);
-  
+
+#ifdef PRINT_BACK
+    INPUT_SERIAL.print(F("INIT"));
+#endif
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(wifi_ssid, wifi_pass);
 }
 
 void ESPTSLog::update() {
-  if (INPUT_SERIAL.available() > 0) inputStringBuffer = INPUT_SERIAL.readStringUntil('\n');
+  if (INPUT_SERIAL.available() > 0) {
+
+#ifdef PRINT_BACK
+    INPUT_SERIAL.print(F("Available: "));
+    INPUT_SERIAL.println(INPUT_SERIAL.available(), DEC);
+#endif
+
+    inputStringBuffer = INPUT_SERIAL.readStringUntil('\n');
+  }
   if (inputStringBuffer.length()==0) return;
 
   // make sure we're connected
@@ -23,6 +35,10 @@ void ESPTSLog::update() {
       return;
     }
   }
+
+#ifdef PRINT_BACK
+  INPUT_SERIAL.println(F("Connected"));
+#endif
   
   if (client.connect(server, 80)) {
     
@@ -37,7 +53,16 @@ void ESPTSLog::update() {
     client.print(inputStringBuffer);
     client.print("\n\n");
 
+#ifdef PRINT_BACK
+    INPUT_SERIAL.println(inputStringBuffer);
+#endif
+
     inputStringBuffer = "";
+  } else {
+#ifdef PRINT_BACK
+    INPUT_SERIAL.println(F("Error connecting to server"));
+#endif
+
   }
   client.stop();
 }
